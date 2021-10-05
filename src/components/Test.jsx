@@ -3,13 +3,17 @@ import ReactDOM from "react-dom";
 import TestService from "../api/TestService";
 import parse from 'html-react-parser'
 import babel from 'babel-core'
+import Test2 from './Test2'
 
 class Test extends Component{
     constructor(props){
         super(props)
         this.state={
             btn:'',
-            cal:''
+            cal:'',
+            target:'JA',
+            source:'EN',
+            status:false
         }
         this.getButton = this.getButton.bind(this)
         this.calculate = this.calculate.bind(this)
@@ -30,6 +34,10 @@ class Test extends Component{
         
     }
     getButton(){
+            // if(this.state.target===''){
+            //     console.log("Target not set yet")
+            //     this.setState
+            // }
           var treeWalker = this.getTreeWalkerObject()
           var nodeList = [];
           var currentNode = treeWalker.currentNode;
@@ -42,7 +50,8 @@ class Test extends Component{
             
           }
 let i=0;
-          TestService.getTranslatedValue(nodeList)
+
+          TestService.getTranslatedValue(nodeList,this.state.target,this.state.source)
           .then(response=>{
               var treeWalker = this.getTreeWalkerObject()
               var nodeList = [];
@@ -55,16 +64,35 @@ let i=0;
             
               treeWalker.currentNode.textContent= response.data[i]
                 i++
+            
+               
+               
               }
           })
 
+          if(this.state.target==='JA'){
+              console.log("Target EN found")
+            this.setState({
+                target:'EN',
+                source:'JA'
+            })
+        }else{
+            console.log("Target JA found")
+            this.setState({
+                target:'JA',
+                source:'EN'
+            })
+        }
        
+        console.log("Status: "+this.state.target)
+        console.log("Target: "+this.state.source)
         
        
     }
     calculate(){
         let a=3*5
         console.log("calculate:"+a)
+        alert("Hello, this is me!")
     }
     parsing(){
        
@@ -73,10 +101,8 @@ let i=0;
         return  (<div id="test">
             <h1>Testing by raihan</h1>
             <button onClick={this.getButton}>show</button>
-            {/* <div>{this.parsing()}</div> */}
-            {/* <div dangerouslySetInnerHTML={{__html:this.state.btn}}></div> */}
-            <div id="parsedText"></div>
-            {/* { new DOMParser().parseFromString(this.state.btn,"text/html")} */}
+            <button onClick={this.calculate}>Calculate</button>
+            <Test2/>
    
         </div>)
     }

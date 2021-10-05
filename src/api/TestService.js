@@ -7,8 +7,8 @@ class TestService{
         
     }
 
-    getTranslatedValue(body){
-        return axios.post(`${api_url}/translate/newtext2`,body)
+    getTranslatedValue(body,target,source){
+        return axios.post(`${api_url}/translate/newtext2?target=${target}&source=${source}`,body)
     }
 }
 export default new TestService()

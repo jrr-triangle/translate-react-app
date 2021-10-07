@@ -25,6 +25,7 @@ class Test extends Component{
         this.translateLanguage = this.translateLanguage.bind(this)
         this.calculate = this.calculate.bind(this)
         this.parsing=this.parsing.bind(this)
+        this.Observer= this.Observer.bind(this)
     }
     // componentDidMount(){
     //     this.translateLanguage()
@@ -39,6 +40,7 @@ class Test extends Component{
         TestService.getTranslatedValue(nodeList,this.state.target,this.state.source)
           .then(response=>{
             TestService.getTreeWalkerContent(response)
+              this.Observer()
           })
 
         this.updateTargetSource(this.state.target)
@@ -74,6 +76,78 @@ class Test extends Component{
     }
     parsing(){
        
+    }
+
+
+    Observer() {
+        const mutationObserver = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+                console.log(mutation)
+                if(mutation.addedNodes.length>0) {
+                    if(mutation.target.textContent.length>0) {
+                        console.log(mutation.target.textContent)
+                        mutationObserver.disconnect()
+                        var treeWalker = document.createTreeWalker(
+                            mutation.addedNodes[0],
+                            NodeFilter.SHOW_TEXT,
+                            { acceptNode: function(node) { return NodeFilter.FILTER_ACCEPT; } },
+                            false
+                        );
+                        var nodeList = [];
+                        var currentNode = treeWalker.currentNode;
+                        console.log("Testing....")
+                        var i = 0;
+                        while(treeWalker.nextNode()) {
+                            if(treeWalker.currentNode.textContent.trim().length<1) {
+                                continue;
+                            }
+                            // treeWalker.currentNode.textContent = 'badsha'
+                            nodeList.push(treeWalker.currentNode.textContent)
+                            i++
+                        }
+
+                        TestService.getTranslatedValue(nodeList, 'JA', 'EN')
+                            .then(response => {
+                                var treeWalker2 = document.createTreeWalker(
+                                    mutation.addedNodes[0],
+                                    NodeFilter.SHOW_TEXT,
+                                    { acceptNode: function(node) { return NodeFilter.FILTER_ACCEPT; } },
+                                    false
+                                );
+                                var nodeList2 = [];
+                                var currentNode2 = treeWalker.currentNode;
+                                console.log("Testing2....")
+                                var i = 0;
+                                while(treeWalker2.nextNode()) {
+                                    if(treeWalker2.currentNode.textContent.trim().length<1) {
+                                        continue;
+                                    }
+                                    treeWalker2.currentNode.textContent= response.data[i]
+                                    i++
+                                }
+                            })
+
+                        mutationObserver.observe(document.documentElement, {
+                            attributes: true,
+                            characterData: true,
+                            childList: true,
+                            subtree: true,
+                            attributeOldValue: true,
+                            characterDataOldValue: true
+                        });
+
+                    }
+                }
+            });
+        });
+        mutationObserver.observe(document.documentElement, {
+            attributes: true,
+            characterData: true,
+            childList: true,
+            subtree: true,
+            attributeOldValue: true,
+            characterDataOldValue: true
+        });
     }
     render(){
         

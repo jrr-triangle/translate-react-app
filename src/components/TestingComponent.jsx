@@ -6,19 +6,38 @@ class TestingComponent extends Component{
     constructor(props){
         super(props)
     }
-//    componentDidMount(){
-//        console.log("Target props: "+this.props.target)
-//        console.log("Source props: "+this.props.source)
-//        TestService.translateLanguage(this.props.target,this.props.source)
-//    }
-  
     render(){
         return  (<>
           
-           <div>
+           <div className="container">
              <p>This is testing content</p>
+            
+             <form onSubmit="">
+        <label>
+          Email:{"              "}
+          <input type="text" value="" onChange="" />
+        </label><br/>
+        <label>
+          First Name:{"              "}
+          <input type="text" value="" onChange="" />
+        </label>
+        <br/>
+        <label>
+          Last Name:{"              "}
+          <input type="text" value="" onChange="" />
+        </label>
+        <br/>
+        <label>
+          Phone number:{"              "}
+          <input type="text" value="" onChange="" />
+        </label><br/>
+        <input type="submit" value="Submit" /><br/>
+      </form>      
+
             </div> 
-            {TestService.translateLanguage(this.props.target,this.props.source)}
+           <div>
+           
+           </div>
         </>)
     }
 }

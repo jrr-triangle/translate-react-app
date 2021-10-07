@@ -11,7 +11,7 @@ class Test3 extends Component{
         return  (<div>
            
            <div>
-           <img className="img-fluid" 
+           <img className="img-fluid" height="250px" width="250px"
      src={`${process.env.PUBLIC_URL}/assets/images/test.jpg`} 
      alt="logo"/>
              </div> 

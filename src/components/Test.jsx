@@ -27,23 +27,17 @@ class Test extends Component{
         this.parsing=this.parsing.bind(this)
         this.Observer= this.Observer.bind(this)
     }
-    // componentDidMount(){
-    //     this.translateLanguage()
-    //     //this.updateTargetSource(this.state.target)
-    // }
-   fullTranslate(){
-    TestService.translateLanguage(this.state.target,this.state.source);
-    this.updateTargetSource(this.state.target)
-   }
+   
     translateLanguage(){    
         var nodeList = TestService.getTreeWalkerNodeList()
         TestService.getTranslatedValue(nodeList,this.state.target,this.state.source)
           .then(response=>{
             TestService.getTreeWalkerContent(response)
-              this.Observer()
+              this.Observer(this.state.target,this.state.source)
+              this.updateTargetSource(this.state.target)
           })
 
-        this.updateTargetSource(this.state.target)
+       
         console.log("Updated target: "+this.state.target)
         console.log("updated source: "+this.state.source)  
     }
@@ -79,7 +73,7 @@ class Test extends Component{
     }
 
 
-    Observer() {
+    Observer(target,source) {
         const mutationObserver = new MutationObserver(function (mutations) {
             mutations.forEach(function (mutation) {
                 console.log(mutation)
@@ -106,7 +100,7 @@ class Test extends Component{
                             i++
                         }
 
-                        TestService.getTranslatedValue(nodeList, 'JA', 'EN')
+                        TestService.getTranslatedValue(nodeList,target,source)
                             .then(response => {
                                 var treeWalker2 = document.createTreeWalker(
                                     mutation.addedNodes[0],
@@ -158,10 +152,10 @@ class Test extends Component{
                <>
                <HeaderComponent/>
                <button onClick={()=>{this.translateLanguage()}}>Translate</button>
-               <Link to={`/${this.state.target}/testing`}>Calculate</Link>
+               <Link to="/testing">Calculate</Link>
                <Switch>
                  <Route path="/" exact component={Test2} />
-                 <Route path="/:lg/testing" exact component={TestingComponent}/>
+                 <Route path="/testing" exact component={TestingComponent}/>
                 </Switch>
                 <FooterComponent/>
                </>

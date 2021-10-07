@@ -26,15 +26,27 @@ class Test extends Component{
         this.calculate = this.calculate.bind(this)
         this.parsing=this.parsing.bind(this)
         this.Observer= this.Observer.bind(this)
+        this.hh = this.Observer(this.state.target, this.state.source)
+
+
     }
    
-    translateLanguage(){    
+    translateLanguage(){
+        this.hh.disconnect()
+
         var nodeList = TestService.getTreeWalkerNodeList()
         TestService.getTranslatedValue(nodeList,this.state.target,this.state.source)
           .then(response=>{
             TestService.getTreeWalkerContent(response)
-              this.Observer(this.state.target,this.state.source)
               this.updateTargetSource(this.state.target)
+              this.hh.observe(document.documentElement, {
+                  attributes: true,
+                  characterData: true,
+                  childList: true,
+                  subtree: true,
+                  attributeOldValue: true,
+                  characterDataOldValue: true
+              });
           })
 
        
@@ -73,7 +85,7 @@ class Test extends Component{
     }
 
 
-    Observer(target,source) {
+    Observer(target, source) {
         const mutationObserver = new MutationObserver(function (mutations) {
             mutations.forEach(function (mutation) {
                 console.log(mutation)
@@ -119,29 +131,23 @@ class Test extends Component{
                                     treeWalker2.currentNode.textContent= response.data[i]
                                     i++
                                 }
+                                mutationObserver.observe(document.documentElement, {
+                                    attributes: true,
+                                    characterData: true,
+                                    childList: true,
+                                    subtree: true,
+                                    attributeOldValue: true,
+                                    characterDataOldValue: true
+                                });
                             })
 
-                        mutationObserver.observe(document.documentElement, {
-                            attributes: true,
-                            characterData: true,
-                            childList: true,
-                            subtree: true,
-                            attributeOldValue: true,
-                            characterDataOldValue: true
-                        });
+
 
                     }
                 }
             });
         });
-        mutationObserver.observe(document.documentElement, {
-            attributes: true,
-            characterData: true,
-            childList: true,
-            subtree: true,
-            attributeOldValue: true,
-            characterDataOldValue: true
-        });
+       return mutationObserver
     }
     render(){
         
@@ -152,7 +158,7 @@ class Test extends Component{
                <>
                <HeaderComponent/>
                <button onClick={()=>{this.translateLanguage()}}>Translate</button>
-               <Link to="/testing">Calculate</Link>
+
                <Switch>
                  <Route path="/" exact component={Test2} />
                  <Route path="/testing" exact component={TestingComponent}/>
